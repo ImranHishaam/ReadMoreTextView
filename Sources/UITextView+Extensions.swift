@@ -17,9 +17,9 @@ extension UITextView {
      */
     public func hitTest(pointInGliphRange aPoint: CGPoint, event: UIEvent?, test: (Int) -> UIView?) -> UIView? {
         guard let charIndex = charIndexForPointInGlyphRect(point: aPoint) else {
-                return super.hitTest(aPoint, with: event)
+            return super.hitTest(aPoint, with: event)
         }
-      guard textStorage.attribute(NSAttributedStringKey.link, at: charIndex, effectiveRange: nil) == nil else {
+        guard textStorage.attribute(NSLinkAttributeName, at: charIndex, effectiveRange: nil) == nil else {
             return super.hitTest(aPoint, with: event)
         }
         return test(charIndex)
