@@ -40,16 +40,16 @@ public class ReadMoreTextView: UITextView {
     func setupDefaults() {
         let defaultReadMoreText = NSLocalizedString("ReadMoreTextView.readMore", value: "more", comment: "")
         let attributedReadMoreText = NSMutableAttributedString(string: "... ")
-
+        
         readMoreTextPadding = .zero
         readLessTextPadding = .zero
         isScrollEnabled = false
         isEditable = false
         
         let attributedDefaultReadMoreText = NSAttributedString(string: defaultReadMoreText, attributes: [
-          NSAttributedStringKey.foregroundColor: UIColor.lightGray,
-          NSAttributedStringKey.font: font ?? UIFont.systemFont(ofSize: 14)
-        ])
+            NSAttributedStringKey(rawValue: kCTForegroundColorAttributeName as String): UIColor.lightGray,
+            NSAttributedStringKey(rawValue: kCTFontAttributeName as String): font ?? UIFont.systemFont(ofSize: 14)
+            ])
         attributedReadMoreText.append(attributedDefaultReadMoreText)
         self.attributedReadMoreText = attributedReadMoreText
     }
@@ -140,7 +140,7 @@ public class ReadMoreTextView: UITextView {
     
     /**
      Force to update trimming on the next layout pass. To update right away call `layoutIfNeeded` right after.
-    */
+     */
     public func setNeedsUpdateTrim() {
         _needsUpdateTrim = true
         setNeedsLayout()
@@ -237,9 +237,9 @@ public class ReadMoreTextView: UITextView {
     
     private func attributedStringWithDefaultAttributes(from text: String) -> NSAttributedString {
         return NSAttributedString(string: text, attributes: [
-          NSAttributedStringKey.font: font ?? UIFont.systemFont(ofSize: 14),
-            NSAttributedStringKey.foregroundColor: textColor ?? UIColor.black
-        ])
+            NSAttributedStringKey(rawValue: kCTFontAttributeName as String): font ?? UIFont.systemFont(ofSize: 14),
+            NSAttributedStringKey(rawValue: kCTForegroundColorAttributeName as String): textColor ?? UIColor.black
+            ])
     }
     
     private func needsTrim() -> Bool {
@@ -254,11 +254,11 @@ public class ReadMoreTextView: UITextView {
         
         layoutManager.invalidateLayout(forCharacterRange: layoutManager.characterRangeThatFits(textContainer: textContainer), actualCharacterRange: nil)
         textContainer.size = CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude)
-
+        
         if let text = attributedReadMoreText {
             let range = rangeToReplaceWithReadMoreText()
             guard range.location != NSNotFound else { return }
-
+            
             textStorage.replaceCharacters(in: range, with: text)
         }
         
@@ -271,10 +271,10 @@ public class ReadMoreTextView: UITextView {
         
         shouldTrim = false
         textContainer.maximumNumberOfLines = 0
-
+        
         if let originalAttributedText = _originalAttributedText?.mutableCopy() as? NSMutableAttributedString {
             attributedText = _originalAttributedText
-            let range = NSRange(location: 0, length: text.count)
+            let range = NSRange(location: 0, length: text.length)
             if let attributedReadLessText = attributedReadLessText {
                 originalAttributedText.append(attributedReadLessText)
             }
@@ -323,7 +323,7 @@ public class ReadMoreTextView: UITextView {
             let characterIndex = layoutManager.characterIndexForGlyph(at: glyphIndex)
             return characterIndex - 1
         } else {
-            return NSMaxRange(rangeThatFits) - readMoreText!.count
+            return NSMaxRange(rangeThatFits) - readMoreText!.length
         }
     }
     
@@ -333,22 +333,22 @@ public class ReadMoreTextView: UITextView {
         let layoutManager = NSLayoutManager()
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
-        let readMoreBoundingRect = layoutManager.boundingRectForCharacterRange(range: NSMakeRange(0, text.count), inTextContainer: textContainer)
+        let readMoreBoundingRect = layoutManager.boundingRectForCharacterRange(range: NSMakeRange(0, text.length), inTextContainer: textContainer)
         return readMoreBoundingRect
     }
     
     private func readMoreTextRange() -> NSRange {
         var readMoreTextRange = rangeToReplaceWithReadMoreText()
         if readMoreTextRange.location != NSNotFound {
-            readMoreTextRange.length = readMoreText!.count + 1
+            readMoreTextRange.length = readMoreText!.length + 1
         }
         return readMoreTextRange
     }
     
     private func readLessTextRange() -> NSRange {
-        return NSRange(location: _originalTextLength, length: readLessText!.count + 1)
+        return NSRange(location: _originalTextLength, length: readLessText!.length + 1)
     }
-
+    
     private func pointIsInReadMoreOrReadLessTextRange(point aPoint: CGPoint) -> Bool? {
         if needsTrim() && pointIsInTextRange(point: aPoint, range: readMoreTextRange(), padding: readMoreTextPadding) {
             return false
@@ -357,5 +357,11 @@ public class ReadMoreTextView: UITextView {
         }
         return nil
     }
-	
+    
+}
+
+extension String {
+    var length: Int {
+        return characters.count
+    }
 }
