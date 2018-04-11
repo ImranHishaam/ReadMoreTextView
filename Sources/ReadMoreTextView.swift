@@ -47,8 +47,8 @@ public class ReadMoreTextView: UITextView {
         isEditable = false
         
         let attributedDefaultReadMoreText = NSAttributedString(string: defaultReadMoreText, attributes: [
-            kCTForegroundColorAttributeName as String: UIColor.lightGray,
-            kCTFontAttributeName as String: font ?? UIFont.systemFont(ofSize: 14)
+            NSAttributedStringKey(rawValue: kCTForegroundColorAttributeName as String as String): UIColor.lightGray,
+            NSAttributedStringKey(rawValue: kCTFontAttributeName as String as String): font ?? UIFont.systemFont(ofSize: 14)
             ])
         attributedReadMoreText.append(attributedDefaultReadMoreText)
         self.attributedReadMoreText = attributedReadMoreText
@@ -237,8 +237,8 @@ public class ReadMoreTextView: UITextView {
     
     private func attributedStringWithDefaultAttributes(from text: String) -> NSAttributedString {
         return NSAttributedString(string: text, attributes: [
-            kCTFontAttributeName as! String: font ?? UIFont.systemFont(ofSize: 14),
-            kCTForegroundColorAttributeName as! String: textColor ?? UIColor.black
+            NSAttributedStringKey(rawValue: kCTFontAttributeName as! String): font ?? UIFont.systemFont(ofSize: 14),
+            NSAttributedStringKey(rawValue: kCTForegroundColorAttributeName as! String): textColor ?? UIColor.black
             ])
     }
     
@@ -274,7 +274,7 @@ public class ReadMoreTextView: UITextView {
         
         if let originalAttributedText = _originalAttributedText?.mutableCopy() as? NSMutableAttributedString {
             attributedText = _originalAttributedText
-            let range = NSRange(location: 0, length: text.length)
+            let range = NSRange(location: 0, length: attributedText.length)
             if let attributedReadLessText = attributedReadLessText {
                 originalAttributedText.append(attributedReadLessText)
             }
@@ -363,5 +363,12 @@ public class ReadMoreTextView: UITextView {
 extension String {
     var length: Int {
         return characters.count
+    }
+    
+    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
+        
+        return ceil(boundingBox.height)
     }
 }
