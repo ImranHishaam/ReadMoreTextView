@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ReadMoreTextView"
-  s.version      = "3.0.0"
+  s.version      = "3.0.2"
   s.summary      = 'UITextView subclass with "read more"/"read less" capabilities and UITextView extensions to handle touches in characters range.'
 
   s.description  = <<-DESC
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "8.0"
 
-  s.source       = { :git => "https://github.com/ilyapuchka/ReadMoreTextView.git", :tag => s.version }
+  s.source       = { :git => "https://github.com/ImranHishaam/ReadMoreTextView.git", :tag => s.version }
 
   s.source_files  = "Sources/*.swift"
 
